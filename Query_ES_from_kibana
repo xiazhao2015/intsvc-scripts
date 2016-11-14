@@ -1,0 +1,18 @@
+oc login --username=xiazhao@redhat.com --password=redhat
+test_token="$(oc whoami -t)"
+test_name="$(oc whoami)"
+test_ip="127.0.0.1"
+oc login --username=system:admin
+
+#oc exec logging-kibana-ops -c kibana -- curl --connect-timeout 1 -s -k \
+       --cert /etc/kibana/keys/cert --key /etc/kibana/keys/key \
+       -H "X-Proxy-Remote-User: $test_name" -H "Authorization: Bearer $test_token" -H "X-Forwarded-For: 127.0.0.1" \
+       https://logging-es-ops:9200/.operations.*/_search | \
+       python -mjson.tool | more
+
+oc exec logging-kibana-1-j0od7 -c kibana -- curl --connect-timeout 1 -s -k  --cert /etc/kibana/keys/cert --key /etc/kibana/keys/key  -H "X-Proxy-Remote-User: xiazhao@redhat.com" -H "Authorization: Bearer 77kcF8GqreM6u8HL3OljKJ-OMP0GC8vTm14yAP3ff-I" -H "X-Forwarded-For: 127.0.0.1" 'https://logging-es:9200/.operations.*/_search'
+
+#https://github.com/openshift/origin-aggregated-logging/blob/master/hack/testing/check-logs.go#L35
+#proxyHeaders := `-H 'X-Proxy-Remote-User: ` + userName + `' -H 'Authorization: Bearer ` + userToken + `' -H 'X-Forwarded-For: ` + testIP + `'
+
+#oc exec logging-kibana-2-z1s8c -- curl --connect-timeout 1 -s -k --cert /etc/kibana/keys/cert --key /etc/kibana/keys/key 'https://logging-es:9200/*/_count?q=message:*'
