@@ -1,0 +1,18 @@
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "pvcname-1m-rox-#NS#",
+        "labels": {
+            "usedFor": "tc522127"
+        }
+      },
+      "spec": {
+        "accessModes": [ "ReadOnlyMany" ],
+        "resources": {
+          "requests": {
+            "storage": "1Mi"
+          }
+        }
+      }
+    }
