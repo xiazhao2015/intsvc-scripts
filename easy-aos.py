@@ -607,7 +607,7 @@ class AOS(object):
         elif AOS.imageVersion >= "3.3.0":
            paraList.extend(AOS.make_para_list({'MODE':AOS.deployMode,'USER_WRITE_ACCESS':AOS.userWriteAccess,'DYNAMICALLY_PROVISION_STORAGE':AOS.dynamicallyPV}))
 
-        AOS.run_ssh_command("oc new-app metrics-deployer-template -p {}".format(','.join(paraList)), ssh=False)
+        AOS.run_ssh_command("oc new-app metrics-deployer-template -p {}".format(' -p '.join(paraList)), ssh=False)
         if "registry.qe" in AOS.imagePrefix:
            output = AOS.run_ssh_command("oc get pod --no-headers -n {}|grep metrics-deployer".format(AOS.osProject), ssh=False)
            deployerPodName = output.split()[0]
@@ -691,7 +691,7 @@ class AOS(object):
         AOS.run_ssh_command('oc patch configmap logging-deployer  -p {}'.format(pipes.quote('{"data":{"use-journal":"'+AOS.useJournal+'"}}')), ssh=False)
         AOS.run_ssh_command('oc patch configmap logging-deployer  -p {}'.format(pipes.quote('{"data":{"enable-ops-cluster":"'+AOS.enableKibanaOps+'"}}')), ssh=False)
         AOS.run_ssh_command('oc patch configmap logging-deployer  -p {}'.format(pipes.quote('{"data":{"es-cluster-size":"'+AOS.ESClusterSize+'"}}')), ssh=False)
-        cmd = "oc new-app logging-deployer-template -p IMAGE_PREFIX={},IMAGE_VERSION={},MODE={}".format(AOS.imagePrefix,AOS.imageVersion,AOS.deployMode)
+        cmd = "oc new-app logging-deployer-template -p IMAGE_PREFIX={} -p IMAGE_VERSION={} -p MODE={}".format(AOS.imagePrefix,AOS.imageVersion,AOS.deployMode)
         AOS.run_ssh_command(cmd,ssh=False)
  
     @classmethod
@@ -725,7 +725,7 @@ class AOS(object):
            #AOS.run_ssh_command("oc create configmap logging-deployer  --from-literal kibana-hostname={}.{} --from-literal public-master-url={} --from-literal es-cluster-size={} --from-literal enable-ops-cluster={} --from-literal use-journal={} --from-literal kibana-ops-hostname={}.{} --from-literal es-instance-ram={} --from-literal es-pvc-size=1G --from-literal es-ops-pvc-size=1G".format(AOS.kibanaAppname,subdomain,AOS.MasterURL,AOS.ESClusterSize,AOS.enableKibanaOps,AOS.useJournal,AOS.kibanaOpsAppname,subdomain,AOS.ESRam), ssh=False)
            AOS.run_ssh_command("oc label node -l registry=enabled logging-infra-fluentd=true --overwrite", ssh=False)
            if AOS.imageVersion >= "3.4.0":
-              AOS.do_permission("add-cluster-role-to-user","rolebinding-reader",user="system:serviceaccount:{}:aggregated-logging-fluentd".format(AOS.osProject))
+              AOS.do_permission("add-cluster-role-to-user","rolebinding-reader",user="system:serviceaccount:{}:aggregated-logging-elasticsearch".format(AOS.osProject))
         elif AOS.imageVersion > "3.2.1" and AOS.imageVersion < "3.3.0":
            AOS.do_permission("add-scc-to-user","hostmount-anyuid",user="system:serviceaccount:{}:aggregated-logging-elasticsearch".format(AOS.osProject))
            AOS.run_ssh_command("oc new-app logging-deployer-account-template", ssh=False)
@@ -754,9 +754,10 @@ class AOS(object):
               AOS.add_pull_secret_for_registryqe_repo()
 
         if AOS.imageVersion < "3.3.0":
-           cmd = "oc new-app logging-deployer-template -p {}".format(','.join(paraList))
+           #cmd = "oc new-app logging-deployer-template -p {}".format(','.join(paraList))
+           cmd = "oc new-app logging-deployer-template -p {}".format(' -p '.join(paraList))
         else:
-           cmd = "oc new-app logging-deployer-template -p IMAGE_PREFIX={},IMAGE_VERSION={},MODE={}".format(AOS.imagePrefix,AOS.imageVersion,AOS.deployMode)
+           cmd = "oc new-app logging-deployer-template -p IMAGE_PREFIX={} -p IMAGE_VERSION={} -p MODE={}".format(AOS.imagePrefix,AOS.imageVersion,AOS.deployMode)
         AOS.run_ssh_command(cmd,ssh=False)
 
     # Git clone metrics/logging/apiman for OpenShift origin env if needed
