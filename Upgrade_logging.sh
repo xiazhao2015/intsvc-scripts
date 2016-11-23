@@ -1,12 +1,18 @@
+
+
+
+
+
+
 #!/bin/bash
 
 # set -ex
 
-#!! Add yourself to cluster-admin before upgrading!!
-# oadm policy add-cluster-role-to-user cluster-admin xiazhao@redhat.com
+#!! Add yourself to cluster-admin !!
+# oadm policy add-cluster-role-to-user cluster-admin xiazhao
 export proj=logging
 
-# oc delete template logging-deployer-account-template logging-deployer-template
+oc delete template logging-deployer-account-template logging-deployer-template
 
 oc create -f https://raw.githubusercontent.com/openshift/origin-aggregated-logging/master/deployer/deployer.yaml
 
@@ -35,8 +41,10 @@ oadm policy add-cluster-role-to-user rolebinding-reader system:serviceaccount:lo
 #Upgrade from 3.2.0 where configmap didn't exist
 #oc new-app logging-deployer-template -p PUBLIC_MASTER_URL=https://10.8.175.190:8443,ENABLE_OPS_CLUSTER=false,IMAGE_PREFIX=brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/,IMAGE_VERSION=3.3.1,ES_INSTANCE_RAM=1G,ES_CLUSTER_SIZE=1,KIBANA_HOSTNAME=kibana.1020-37t.qe.rhcloud.com,KIBANA_OPS_HOSTNAME=kibana-ops.1020-37t.qe.rhcloud.com,MASTER_URL=https://10.8.175.190:8443,MODE=upgrade
 
-#Upgrade from 3.3 where configmap exist
-oc new-app logging-deployer-template -p IMAGE_PREFIX=brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/,IMAGE_VERSION=3.4.0,MODE=upgrade
+oc new-app logging-deployer-template -p PUBLIC_MASTER_URL=https://host-8-175-190.host.centralci.eng.rdu2.redhat.com:8443 -p ENABLE_OPS_CLUSTER=false -p IMAGE_PREFIX=brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/ -p IMAGE_VERSION=3.4.0 -p ES_INSTANCE_RAM=1G -p ES_CLUSTER_SIZE=1 -p KIBANA_HOSTNAME=kibana.1123-sd4.qe.rhcloud.com -p KIBANA_OPS_HOSTNAME=kibana-ops.1123-sd4.qe.rhcloud.com -p MASTER_URL=https://host-8-175-190.host.centralci.eng.rdu2.redhat.com:8443 -p MODE=upgrade
+
+#Upgrade from 3.3.1 where configmap exist
+#oc new-app logging-deployer-template -p IMAGE_PREFIX=brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/openshift3/,IMAGE_VERSION=3.4.0,MODE=upgrade
 
 
 
