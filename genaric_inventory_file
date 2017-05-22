@@ -2,7 +2,7 @@
 masters
 
 [masters]
-$master openshift_public_hostname=$master
+#master# openshift_public_hostname=#master#
 
 [OSEv3:vars]
 ansible_ssh_user=root
@@ -12,17 +12,17 @@ deployment_type=openshift-enterprise
 # Logging
 openshift_logging_install_logging=true
 openshift_logging_kibana_hostname=kibana.$subdomain
-openshift_logging_kibana_ops_hostname=kibana-ops.$subdomain
-public_master_url=https://$master:$port
-openshift_logging_image_prefix=$registry_version/openshift3/
-openshift_logging_image_version=$image_version
+openshift_logging_kibana_ops_hostname=kibana-ops.#subdomain#
+public_master_url=https://#master#:#port#
+openshift_logging_image_prefix=#registry_version#/openshift3/
+openshift_logging_image_version=#image_version#
 openshift_logging_namespace=logging
 #openshift_logging_fluentd_use_journal=true
 
 
 # Metrics
 openshift_metrics_install_metrics=true
-openshift_metrics_hawkular_hostname=hawkular-metrics.$subdomain
+openshift_metrics_hawkular_hostname=hawkular-metrics.#subdomain#
 openshift_metrics_project=openshift-infra
-openshift_metrics_image_prefix=$registry_version/openshift3/
-openshift_metrics_image_version=$image_version
+openshift_metrics_image_prefix=#registry_version#/openshift3/
+openshift_metrics_image_version=#image_version#
